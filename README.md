@@ -1,2 +1,4 @@
 # Julia-Guide
-Introduction to Julia
+Introduction to Julia.
+
+Site for notebooks: https://nkuamath-julialab.github.io/Julia-Introduction/
