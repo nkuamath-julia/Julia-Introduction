@@ -1,8 +1,20 @@
 ### A Pluto.jl notebook ###
-# v0.19.19
+# v0.14.9
 
 using Markdown
 using InteractiveUtils
+
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : missing
+        el
+    end
+end
+
+# ╔═╡ d0bb6fd1-1d9c-4d4c-9eae-741f81a899e1
+using PlutoUI
 
 # ╔═╡ d382b6c0-c996-4b55-a4e4-13cec95f4c6c
 let
@@ -156,19 +168,25 @@ md"""
 - Αποτελούνται απο χαρακτήρες του Unicode.
 """
 
-# ╔═╡ 6714bb9f-37d3-4593-83fd-8e47543180c4
-let
-	x = "Hello world!!"
-	x[1]
-end
+# ╔═╡ 7ef8c27b-b65d-4ac2-b6d1-23c01d15ff4b
+phrase = "Hello world!!";
+
+# ╔═╡ 83d8f90d-89de-4c8b-8427-94c4b65cd47c
+phrase[1]
 
 # ╔═╡ 283b7bff-5ab3-446a-8498-171f253adfac
 md"""
 - Μπορούν να αναγνωρίσουν τους αριθμητικούς τελεστές * και ^, όπου * στις συμβολοσειρές ερμηνεύεται ως ένωση συμβολοσειρών και  ^ ως επανάληψη συμβολοσειράς.
 """
 
-# ╔═╡ 78e5c6b4-165d-49d2-a424-845e25f100ed
+# ╔═╡ 31d6b446-60fa-473e-b80a-f842ddbd2e34
 "Spam"^5
+
+# ╔═╡ d18e843d-fdbc-4e8f-92a9-c899cba59c0c
+@bind power Slider(1:15, default = 7)
+
+# ╔═╡ 78e5c6b4-165d-49d2-a424-845e25f100ed
+"😄"^power
 
 # ╔═╡ 20d20af3-1efb-44e8-ab14-a79cfc6c30ae
 md"""
@@ -410,13 +428,13 @@ let
 	    do this
 	end
 	=#
-	x = 2
-	y = 5
+	a = 2
+	b = 5
 	
-	if x < y
-	    print("Το $x είναι μικρότερο του $y.")
+	if a < b
+	    print("Το $a είναι μικρότερο του $b.")
 	else
-	    print("Το $x είναι μεγαλύτερο ίσος του $y.")
+	    print("Το $a είναι μεγαλύτερο ίσος του $b.")
 	end
 end
 
@@ -425,33 +443,61 @@ md"""
 2. `if-elseif-else-end`
 """
 
+# ╔═╡ 5c3d0b87-759c-4176-83ac-61cf3c8b63bf
+@bind a Slider(0:30, default=15)
+
+# ╔═╡ 93b00109-f48e-4f0b-b16f-197605cb7a0b
+@bind b Slider(0:30, default=14)
+
 # ╔═╡ 63e58fd9-6d95-4a20-84e7-431bc1ee59ec
-let
-	#=
-	if condition1 is true
-	    then do this
-	elseif condition2 is true
-	    then do this
-	else 
-	    do this
-	end
-	=#
-	
-	x = 5
-	y = 5
-	if x < y
-	    print("Το $x είναι μικρότερο του $y.")
-	elseif x > y
-	    print("Το $x είναι μεγαλύτερος του $y.")
-	else 
-	    print("Τα x και y είναι ίσα.")
-	end
+#=
+if condition1 is true
+	then do this
+elseif condition2 is true
+	then do this
+else 
+	do this
+end
+=#
+
+if a < b
+	print("Το $a είναι μικρότερο του $b.")
+elseif a > b
+	print("Το $a είναι μεγαλύτερος του $b.")
+else 
+	print("Τα a και b είναι ίσα.")
 end
 
 # ╔═╡ e2f44e16-ca6e-465d-81ab-3a2571ade32a
 md"""
 3. `if-elseif-elseif-end`
 """
+
+# ╔═╡ d249b40a-914e-4e6b-a74d-856166c566b4
+import PlutoUI: combine
+
+# ╔═╡ af2d93d5-b65e-4a28-8444-ff8d4b32696d
+function number_input(numbers::Vector)
+	
+	return combine() do Child
+		
+		inputs = [
+			md""" $(name): $(
+				Child(name, Slider(1:20, default = 5))
+			)"""
+			
+			for name in numbers
+		]
+		
+		md"""
+		#### Variables
+		$(inputs)
+		"""
+	end
+end
+
+# ╔═╡ dea5f542-6c8b-4d1d-8e25-e71cb6743b95
+@bind variables number_input(["c", "d"])
 
 # ╔═╡ 73a817f9-a051-4375-b7a5-c5aa16d05bb0
 let
@@ -464,15 +510,15 @@ let
 	     then do this
 	end
 	=#
+c = variables.c
+d = variables.d
 	
-	x = 5
-	y = 5
-	if x < y
-	    print("Το $x είναι μικρότερο του $y.")
-	elseif x > y
-	    print("Το $x είναι μεγαλύτερο του $y.")
-	elseif x == y 
-	    print("Τα x και y είναι ίσα.")
+	if c < d
+	    print("Το $c είναι μικρότερο του $d.")
+	elseif c > d
+	    print("Το $c είναι μεγαλύτερο του $d.")
+	elseif c == d 
+	    print("Τα c και d είναι ίσα.")
 	end
 end
 
@@ -481,32 +527,39 @@ md"""
 4. Nested (Ένθετα)
 """
 
+# ╔═╡ a8b017d6-b8e7-4b9b-b343-5a5414ae4583
+@bind x confirm(Slider(-5:10, default=5))
+
+# ╔═╡ 0908e13f-cb5f-402a-9f1e-2dcd35898839
+@bind y confirm(Slider(-5:10, default=-3))
+
 # ╔═╡ 5b1c9a5e-bd5e-486c-b6fc-9a18f021a9e5
-let
+begin
 	#=
 	if condition1 is true
-	    then do this
+		then do this
 	else
-	     if condition2 is true
-	         then do this
-	     else  
-	         then do this
-	     end
+		 if condition2 is true
+			 then do this
+		 else  
+			 then do this
+		 end
 	end
 	=#
 	
-	x = 5
-	y = 2
 	if x == y
-	    print("Τα x και y είναι ίσα.")
+		print("Τα x και y είναι ίσα.")
 	else
-	    if x > y
-	        print("Το $x είναι μεγαλύτερο του $y.")
-	    else
-	        print("Το $x είναι μικρότερο του $y.")
-	    end
+		if x > y
+			print("Το $x είναι μεγαλύτερο του $y.")
+		else
+			print("Το $x είναι μικρότερο του $y.")
+		end
 	end
 end
+
+# ╔═╡ 9576bfad-110c-41d8-9042-789afdc5332a
+
 
 # ╔═╡ 1688076f-0b00-412c-8c40-95763cdad9d6
 let
@@ -1241,13 +1294,13 @@ md"""
 """
 
 # ╔═╡ 4023224b-7ae6-4901-81b7-487add673c26
-all_sum2(a,b) = sum(a:b)
+all_sum2((a,b)) = sum(a:b)
 
-# ╔═╡ 9a990af4-a72a-4982-827b-a9d2811d70bc
-all_sum2(-1000,1000)
+# ╔═╡ f9a45c22-4dd2-41b0-890d-a204d58dc595
+@bind numbers Select([(-1000,1000), (-500,1000),(200,300)])
 
-# ╔═╡ 11fc0227-65f4-40f2-96bf-6e0add7787f0
-all_sum2(-500,1000)
+# ╔═╡ 317f18b7-0ede-4a3f-a4b5-aec91c787345
+all_sum2(numbers)
 
 # ╔═╡ 43ea4fbc-85cc-479d-9a8d-324438cc172f
 
@@ -1257,21 +1310,21 @@ md"""
 Για να __επιστρέψουμε__ values από τις συναρτήσεις χρησιμοποιούμε το `return`.
 """
 
-# ╔═╡ 11674ca6-b854-41ae-b31d-69309b9bf454
-begin
-	#Παράδειγμα συνάρτησης που επιστρέφει το άθροισμα ή το γινόμενο δύο αριθμών.
-	function calculate_items(item1, item2)
-	    if item1 > item2
-	        return item1+item2
-	    else
-	        return item1*item2
-	    end
+# ╔═╡ a9e86288-9633-418d-85b2-f6afe4ee6e5b
+#Παράδειγμα συνάρτησης που επιστρέφει το άθροισμα ή το γινόμενο δύο αριθμών.
+function calculate_items1((item1, item2))
+	if item1 > item2
+		return item1+item2
+	else
+		return item1*item2
 	end
-	
-	#Επιστρέφουν το αποτέλεσμα.
-	#calculate_items(8,5)
-	calculate_items(3,5)
 end
+
+# ╔═╡ f783edd8-581c-40ae-99c4-5bef52d7340e
+@bind items MultiCheckBox([(8,5), (3,5), (5,5)])
+
+# ╔═╡ bf9239d4-43ac-4af3-bbf1-01576c113491
+[calculate_items1(i) for i in items]
 
 # ╔═╡ e233874a-83c0-44e4-8815-55bf2fcf0e3b
 md"""
@@ -1281,19 +1334,230 @@ md"""
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[compat]
+PlutoUI = "~0.7.49"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
+[[AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.1.4"
+
+[[ArgTools]]
+uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
+
+[[Artifacts]]
+uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+
+[[Base64]]
+uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+
+[[ColorTypes]]
+deps = ["FixedPointNumbers", "Random"]
+git-tree-sha1 = "eb7f0f8307f71fac7c606984ea5fb2817275d6e4"
+uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
+version = "0.11.4"
+
+[[Dates]]
+deps = ["Printf"]
+uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
+[[Downloads]]
+deps = ["ArgTools", "LibCURL", "NetworkOptions"]
+uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+
+[[FixedPointNumbers]]
+deps = ["Statistics"]
+git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
+uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
+version = "0.8.4"
+
+[[Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.4"
+
+[[HypertextLiteral]]
+deps = ["Tricks"]
+git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.4"
+
+[[IOCapture]]
+deps = ["Logging", "Random"]
+git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
+uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
+version = "0.2.2"
+
+[[InteractiveUtils]]
+deps = ["Markdown"]
+uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+
+[[JSON]]
+deps = ["Dates", "Mmap", "Parsers", "Unicode"]
+git-tree-sha1 = "3c837543ddb02250ef42f4738347454f95079d4e"
+uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+version = "0.21.3"
+
+[[LibCURL]]
+deps = ["LibCURL_jll", "MozillaCACerts_jll"]
+uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+
+[[LibCURL_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
+uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
+
+[[LibGit2]]
+deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
+uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+
+[[LibSSH2_jll]]
+deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
+uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
+
+[[Libdl]]
+uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[[LinearAlgebra]]
+deps = ["Libdl"]
+uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[[Logging]]
+uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[MIMEs]]
+git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "0.1.4"
+
+[[Markdown]]
+deps = ["Base64"]
+uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
+[[MbedTLS_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
+
+[[Mmap]]
+uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+
+[[MozillaCACerts_jll]]
+uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
+
+[[NetworkOptions]]
+uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
+
+[[Parsers]]
+deps = ["Dates", "SnoopPrecompile"]
+git-tree-sha1 = "8175fc2b118a3755113c8e68084dc1a9e63c61ee"
+uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
+version = "2.5.3"
+
+[[Pkg]]
+deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+
+[[PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "eadad7b14cf046de6eb41f13c9275e5aa2711ab6"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.49"
+
+[[Preferences]]
+deps = ["TOML"]
+git-tree-sha1 = "47e5f437cc0e7ef2ce8406ce1e7e24d44915f88d"
+uuid = "21216c6a-2e73-6563-6e65-726566657250"
+version = "1.3.0"
+
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
+[[REPL]]
+deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
+uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+
+[[Random]]
+deps = ["Serialization"]
+uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[[Reexport]]
+git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
+uuid = "189a3867-3050-52da-a836-e630ba90ab69"
+version = "1.2.2"
+
+[[SHA]]
+uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+
+[[Serialization]]
+uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+
+[[SnoopPrecompile]]
+deps = ["Preferences"]
+git-tree-sha1 = "e760a70afdcd461cf01a575947738d359234665c"
+uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
+version = "1.0.3"
+
+[[Sockets]]
+uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
+
+[[SparseArrays]]
+deps = ["LinearAlgebra", "Random"]
+uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[Statistics]]
+deps = ["LinearAlgebra", "SparseArrays"]
+uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[[TOML]]
+deps = ["Dates"]
+uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+
+[[Tar]]
+deps = ["ArgTools", "SHA"]
+uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
+
+[[Test]]
+deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
+uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[Tricks]]
+git-tree-sha1 = "6bac775f2d42a611cdfcd1fb217ee719630c4175"
+uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
+version = "0.1.6"
+
+[[URIs]]
+git-tree-sha1 = "ac00576f90d8a259f2c9d823e91d1de3fd44d348"
+uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
+version = "1.4.1"
+
+[[UUIDs]]
+deps = ["Random", "SHA"]
+uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[Zlib_jll]]
+deps = ["Libdl"]
+uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+
+[[nghttp2_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
+
+[[p7zip_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
@@ -1320,9 +1584,13 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 # ╟─eaaee65e-2e38-4e05-9299-34c3a665e073
 # ╠═b6abd709-7d4f-4b04-b90b-5e09b9d6ab8b
 # ╟─2c2c7b25-817a-40eb-9989-e48b38f4aa3b
-# ╠═6714bb9f-37d3-4593-83fd-8e47543180c4
+# ╠═7ef8c27b-b65d-4ac2-b6d1-23c01d15ff4b
+# ╠═83d8f90d-89de-4c8b-8427-94c4b65cd47c
 # ╟─283b7bff-5ab3-446a-8498-171f253adfac
 # ╠═f31668e5-9c2a-4cd3-b053-ffeef4ad9109
+# ╠═31d6b446-60fa-473e-b80a-f842ddbd2e34
+# ╠═d0bb6fd1-1d9c-4d4c-9eae-741f81a899e1
+# ╠═d18e843d-fdbc-4e8f-92a9-c899cba59c0c
 # ╠═78e5c6b4-165d-49d2-a424-845e25f100ed
 # ╟─20d20af3-1efb-44e8-ab14-a79cfc6c30ae
 # ╠═1c9216d5-c426-4eed-9301-2b5c43bf0696
@@ -1366,15 +1634,22 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 # ╟─69468ec5-7b04-4192-82c1-5e640cd283b3
 # ╟─ccc5b539-6d38-4f5b-9f40-66aa51c2bfab
 # ╟─51566072-1328-4509-8a98-0ddf6075e135
-# ╠═f0ad668b-9f95-42e7-bd25-4c0658be4dfd
 # ╟─e665a8b7-3e0f-401a-9b8d-bd906bec1538
 # ╠═ca40aabb-4cdb-4fd9-95d8-0a49748c37e0
 # ╟─35882436-0ce1-4011-8c0b-65a0eb032856
+# ╠═5c3d0b87-759c-4176-83ac-61cf3c8b63bf
+# ╠═93b00109-f48e-4f0b-b16f-197605cb7a0b
 # ╠═63e58fd9-6d95-4a20-84e7-431bc1ee59ec
 # ╟─e2f44e16-ca6e-465d-81ab-3a2571ade32a
+# ╠═d249b40a-914e-4e6b-a74d-856166c566b4
+# ╟─af2d93d5-b65e-4a28-8444-ff8d4b32696d
+# ╟─dea5f542-6c8b-4d1d-8e25-e71cb6743b95
 # ╠═73a817f9-a051-4375-b7a5-c5aa16d05bb0
 # ╟─4e1bdaf4-ed16-446e-bfec-a0ddaede1815
+# ╠═a8b017d6-b8e7-4b9b-b343-5a5414ae4583
+# ╠═0908e13f-cb5f-402a-9f1e-2dcd35898839
 # ╠═5b1c9a5e-bd5e-486c-b6fc-9a18f021a9e5
+# ╟─9576bfad-110c-41d8-9042-789afdc5332a
 # ╠═1688076f-0b00-412c-8c40-95763cdad9d6
 # ╟─a881c76d-1cc3-449e-8119-3ed6e8928b26
 # ╠═c38ef537-eeee-4d15-a046-151f277bbe7e
@@ -1419,7 +1694,6 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 # ╟─fce793ee-5edb-49dc-a91f-39cb374e1790
 # ╟─bcbb75a2-3533-4685-8763-3eceaec59110
 # ╟─416f4550-c637-4bb2-a789-0b4591df8fd4
-# ╠═2c30ed31-c5b3-47e7-b5e1-e5b9488ca2cf
 # ╟─a9590a3e-c775-4928-884e-acbb97e5b9a5
 # ╟─1d3598ca-bf39-4268-a71f-f5e27d67b908
 # ╟─22c738b1-6dab-4b35-b38e-4445d194ca17
@@ -1463,11 +1737,13 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 # ╟─69411092-6989-449f-a42c-afb38c7b77c3
 # ╟─bb4d2835-0a0d-4959-a3cf-f25b69535c26
 # ╠═4023224b-7ae6-4901-81b7-487add673c26
-# ╠═9a990af4-a72a-4982-827b-a9d2811d70bc
-# ╠═11fc0227-65f4-40f2-96bf-6e0add7787f0
+# ╠═f9a45c22-4dd2-41b0-890d-a204d58dc595
+# ╠═317f18b7-0ede-4a3f-a4b5-aec91c787345
 # ╟─43ea4fbc-85cc-479d-9a8d-324438cc172f
 # ╟─d1070b01-953f-4c3e-80e3-08214173f10b
-# ╠═11674ca6-b854-41ae-b31d-69309b9bf454
+# ╠═a9e86288-9633-418d-85b2-f6afe4ee6e5b
+# ╠═f783edd8-581c-40ae-99c4-5bef52d7340e
+# ╠═bf9239d4-43ac-4af3-bbf1-01576c113491
 # ╟─e233874a-83c0-44e4-8815-55bf2fcf0e3b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
