@@ -63,14 +63,7 @@ We use the identity
 	</msup>
 </math>. We derive:
 <math display="block">	
-	<msup> 
-		<mi>dE = 4π(r+dr)</mi> 
-		<mn>2</mn> 
-	</msup>
-	<msup> 
-		<mi> - 4πr</mi> 
-		<mn>2</mn> 
-	</msup>
+	<mi>dE = 4πdr(2r+dr)</mi> 
 <\math>
 </p>
 """
@@ -155,17 +148,16 @@ function sphere_area(n)
 #print(dE1)
         dE2 = 4*pi*dr*(2*r+dr)
 #print(dE2)
-        err1 = abs(dE-dE1)/dE
-        err2 = abs(dE-dE2)/dE
-        if err1 < err2
+        rel1 = abs(dE-dE1)/dE
+        rel2 = abs(dE-dE2)/dE
+        if rel1 < rel2
             count1 += 1
-        elseif err2 < err1
+		elseif rel2 < rel1
             count2 += 1
         end
     end
     return [count1, count2]
 end
-
 
 # ╔═╡ afd6a481-4d64-4514-8332-fa005cea36b6
 sphere_area(100)
@@ -179,6 +171,6 @@ sphere_area(100)
 # ╟─b6f202ab-1d7a-4335-b064-64151a77b195
 # ╟─fbcafcb5-28a7-4787-a0c9-0f3f6683a951
 # ╟─c092257e-c239-4529-82ee-cd28df48a60d
-# ╠═b7766f91-e437-4ef7-8097-b216a79286a9
+# ╟─b7766f91-e437-4ef7-8097-b216a79286a9
 # ╠═f13a2d69-875e-423f-8571-759478041a6d
 # ╠═afd6a481-4d64-4514-8332-fa005cea36b6
